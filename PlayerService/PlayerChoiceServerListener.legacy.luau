@@ -3,6 +3,10 @@ local CashOutEvent = game.ReplicatedStorage.Remotes.CashOutEvent
 local ContinueEvent = game.ReplicatedStorage.Remotes.ContinueEvent
 local EndGameEvent = game.ReplicatedStorage.Remotes.EndGameEvent
 
+local RoomGenerator = require(game.ServerScriptService.RoomSystem.RoomGenerator)
+local RoomCatalog = require(game.ServerScriptService.RoomSystem.RoomCatalog)
+local PlayerProgressService = require(game.ServerScriptService.PlayerService.PlayerProgressService)
+
 local function ClaimReward(player)
 	print("reward claimed")	
 end
@@ -20,6 +24,20 @@ local function CashOut(player)
 end
 
 local function Continue(player)
+	local roomIndex = PlayerProgressService:GetRoomIndex(player)
+	local roomModel = RoomGenerator.GetRoomIndex(roomIndex)
+	
+	if roomModel then
+		local roomType = roomModel:GetAttribute("RoomType")
+		
+		local roomModule = RoomCatalog[roomType]
+		if roomModule then
+			local RoomClass = require(roomModule)
+			local room = RoomClass.new()
+			room:StartRoom(roomIndex, player)
+		end
+	end
+	
 	ContinueEvent:FireClient(player)
 end
 

@@ -4,7 +4,7 @@ local EndGameEvent = game.ReplicatedStorage.Remotes.EndGameEvent
 
 local RoomGenerator = require(script.Parent.RoomGenerator)
 local RoomCatalog = require(script.Parent.RoomCatalog)
-local PlayerProgressService = require(script.Parent.Parent.PlayerProgressService)
+local PlayerProgressService = require(script.Parent.Parent.PlayerService.PlayerProgressService)
 local AuraCoinRewards = {
 	1,
 	2,
@@ -58,7 +58,7 @@ function RoomManager.GetRisk(player)
 	
 	if roomModule then
 		local RoomClass = require(roomModule)
-		return RoomClass:GetWinPercentage(roomIndex)
+		return RoomClass:GetWinPercentage(roomIndex, player)
 	end
 	
 	return 0

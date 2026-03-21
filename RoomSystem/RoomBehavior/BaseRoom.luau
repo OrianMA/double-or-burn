@@ -57,7 +57,7 @@ function BaseRoom:Destroy()
 	end
 end
 
-function BaseRoom:StartRoom()
+function BaseRoom:StartRoom(index, player)
 	
 	-- Override in derived classes
 end

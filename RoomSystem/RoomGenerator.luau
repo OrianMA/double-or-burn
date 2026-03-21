@@ -51,7 +51,7 @@ end
 function RoomGenerator.Init()
 	CreateRoom(firstRoom)
 	
-	for i = 1, roomPoolSize-1 do
+	for i = 1, roomPoolSize-2 do
 		CreateRoom(lastInstantiateRoom)
 	end
 end
