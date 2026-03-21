@@ -40,7 +40,10 @@ function RoomManager.EndRoomtrigger(player)
 	PlayerProgressService:IncrementRoom(player)
 	local reward = RoomManager.GetReward(player)
 	local riskValue = RoomManager.GetRisk(player)
-	RoomChoiceEvent:FireClient(player, reward, riskValue)
+	local roomIndex = PlayerProgressService:GetRoomIndex(player)
+	local nextRoomModel = RoomGenerator.GetRoomIndex(roomIndex + 1)
+	local isFinalRoom = nextRoomModel == nil
+	RoomChoiceEvent:FireClient(player, reward, riskValue, isFinalRoom)
 end
 
 function RoomManager.GetReward(player)
