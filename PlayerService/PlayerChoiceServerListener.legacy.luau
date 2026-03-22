@@ -26,6 +26,7 @@ end
 local function Continue(player)
 	local roomIndex = PlayerProgressService:GetRoomIndex(player)
 	local roomModel = RoomGenerator.GetRoomIndex(roomIndex)
+	print(roomModel)
 	
 	if roomModel then
 		local roomType = roomModel:GetAttribute("RoomType")
@@ -34,7 +35,7 @@ local function Continue(player)
 		if roomModule then
 			local RoomClass = require(roomModule)
 			local room = RoomClass.new()
-			room:StartRoom(roomIndex, player)
+			room:StartRoom(roomIndex, player, roomModel)
 		end
 	end
 	
