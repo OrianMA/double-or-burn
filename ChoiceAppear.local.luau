@@ -10,7 +10,7 @@ local ContinueButton = Frame.ContinueButton
 local RiskLabel = Frame.RiskLabel
 local RewardLabel = Frame.RewardLabel
 
-roomChoiceEvent.OnClientEvent:Connect(function(reward, riskValue)
+roomChoiceEvent.OnClientEvent:Connect(function(reward, riskValue, isFinalRoom)
 	RewardLabel.Text = tostring(reward)
 	RiskLabel.Text = tostring(riskValue) .. "%"
 	Frame.Visible = true

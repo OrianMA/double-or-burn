@@ -64,20 +64,25 @@ end
 function RoomGenerator.ClearAll()
 	for _, room in ipairs(roomPool) do
 		room:Destroy()
+		task.wait(0.2)
 	end
 	table.clear(roomPool)
-	
 end
 
-function RoomGenerator.Init()
-	InitNumberRoom(firstRoom, 1)
+function RoomGenerator:CreateRace()
 	CreateRoom(firstRoom)
 	InitNumberRoom(lastInstantiateRoom, 2)
-	
+
 	for i = 1, roomPoolSize-2 do
 		CreateRoom(lastInstantiateRoom)
 		InitNumberRoom(lastInstantiateRoom, i+2)
+		task.wait(0.2)
 	end
+end
+
+function RoomGenerator:Init()
+	InitNumberRoom(firstRoom, 1)
+	self:CreateRace()
 end
 
 function RoomGenerator.GetRoomIndex(index)

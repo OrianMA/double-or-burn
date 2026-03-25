@@ -1,10 +1,13 @@
 local RaceStartedEvent = game.ReplicatedStorage.Remotes.RaceStartedEvent
 local RoomChoiceEvent = game.ReplicatedStorage.Remotes.RoomChoiceEvent
 local EndGameEvent = game.ReplicatedStorage.Remotes.EndGameEvent
+local WarningLavaRiseEvent = game.ReplicatedStorage.Remotes.WarningLavaRiseEvent
 
 local RoomGenerator = require(script.Parent.RoomGenerator)
 local RoomCatalog = require(script.Parent.RoomCatalog)
 local PlayerProgressService = require(script.Parent.Parent.PlayerService.PlayerProgressService)
+local LavaRise = require(game.ServerScriptService.LavaRise)
+
 local AuraCoinRewards = {
 	1,
 	2,
@@ -21,16 +24,22 @@ local AuraCoinRewards = {
 	67000
 }
 
+local PlayersRegistered = {}
 
 local RoomManager = {}
 
 function RoomManager.Init(player)
-	print("init")
-	RoomGenerator.Init()
+	RoomGenerator:Init()
+end
+
+local function DiscardPlayerFromRace(player)
+	table.remove(PlayersRegistered, table.find(PlayersRegistered, player))
+	LavaRise:UpdatePlayerNumber(RoomManager.GetPlayerLeft())
 end
 
 local function EndGame(player)
 	PlayerProgressService:ClearRoomProgression(player)
+	DiscardPlayerFromRace(player)
 end
 
 EndGameEvent.OnServerEvent:Connect(EndGame)
@@ -68,8 +77,27 @@ function RoomManager.GetRisk(player)
 end
 
 function RoomManager.ResetRace(player)
-	RoomGenerator.ClearAll()
-	RoomGenerator.Init()
+	task.wait(RoomGenerator.ClearAll())
+	RoomGenerator:CreateRace()
+end
+
+function RoomManager.RegisterPlayerFromRace(player)
+	table.insert(PlayersRegistered, player)
+end
+
+function RoomManager.GetPlayerLeft()
+	return #PlayersRegistered
+end
+
+function RoomManager.RiseLava()
+	if #PlayersRegistered == 0 then return end
+	
+	for _, player in ipairs(PlayersRegistered) do
+		WarningLavaRiseEvent:FireClient(player)
+	end
+	
+	LavaRise:UpdatePlayerNumber(RoomManager.GetPlayerLeft())
+	LavaRise:Rise()
 end
 
 return RoomManager

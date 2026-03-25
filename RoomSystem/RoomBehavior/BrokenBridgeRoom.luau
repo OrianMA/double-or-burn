@@ -73,11 +73,11 @@ function BreakBridge(roomModel)
 		end
 	end
 	
-	task.wait(4)
+	task.wait(6)
 	
 	for _, obj in breakablePart do
 		task.spawn(function()
-			task.wait(math.random(0,900)/1000)
+			task.wait(math.random(1000,3000)/1000)
 			
 			local tweenInfo = TweenInfo.new(1)
 			
