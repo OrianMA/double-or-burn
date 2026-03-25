@@ -67,4 +67,9 @@ function RoomManager.GetRisk(player)
 	return 0
 end
 
+function RoomManager.ResetRace(player)
+	RoomGenerator.ClearAll()
+	RoomGenerator.Init()
+end
+
 return RoomManager

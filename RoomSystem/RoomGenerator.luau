@@ -1,7 +1,7 @@
 local RoomCatalog = require(script.Parent.RoomCatalog)
 
 local roomParent = workspace.Rooms
-local firstRoom = workspace.FirstRoom
+local firstRoom = workspace.Rooms.FirstRoom
 local roomPoolSize = 13
 local roomPool = {}
 local lastInstantiateRoom
@@ -9,12 +9,32 @@ local lastInstantiateRoom
 --room prefabs--
 local safeRoom = game.ServerStorage.Room.SafeRoom
 local BrokenBridgeRoom = game.ServerStorage.Room.BrokenBridgeRoom
+local NumbersPrefab = game.ServerStorage.Numbers
 local roomPrefabs = {
 	safeRoom,
 	BrokenBridgeRoom
 }
 
 local RoomGenerator = {}
+
+local NumberSpawnPointPath = {
+	"SafeZone",
+	"NumbersSpawnPoint"
+}
+
+local function InitNumberRoom(instantiateRoom, roomIndex)
+	local current = instantiateRoom
+	for _, name in ipairs(NumberSpawnPointPath) do
+		current = current:WaitForChild(name)
+	end
+	
+	local currentNumbers = NumbersPrefab:Clone()
+	currentNumbers.Parent = current
+	currentNumbers:PivotTo(current.WorldCFrame)
+	
+	local numberClass = require(currentNumbers.RoomNumbersBehavior)
+	numberClass:Init(roomIndex)
+end
 
 local function GetChildrenNextPositionRoom(instantiateRoom)
 
@@ -46,13 +66,17 @@ function RoomGenerator.ClearAll()
 		room:Destroy()
 	end
 	table.clear(roomPool)
+	
 end
 
 function RoomGenerator.Init()
+	InitNumberRoom(firstRoom, 1)
 	CreateRoom(firstRoom)
+	InitNumberRoom(lastInstantiateRoom, 2)
 	
 	for i = 1, roomPoolSize-2 do
 		CreateRoom(lastInstantiateRoom)
+		InitNumberRoom(lastInstantiateRoom, i+2)
 	end
 end
 

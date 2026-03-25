@@ -9,7 +9,6 @@ local winPercentage = {
 }
 
 local baseSpawnPointPath = {
-	"Room",
 	"SafeZone",
 	"NextRoomPoint"
 }
