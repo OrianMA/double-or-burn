@@ -10,6 +10,8 @@ local ContinueButton = Frame.ContinueButton
 local RiskLabel = Frame.RiskLabel
 local RewardLabel = Frame.RewardLabel
 
+local reward = 0
+
 roomChoiceEvent.OnClientEvent:Connect(function(reward, riskValue, isFinalRoom)
 	RewardLabel.Text = tostring(reward)
 	RiskLabel.Text = tostring(riskValue) .. "%"
@@ -18,7 +20,7 @@ end)
 
 CashOutButton.MouseButton1Click:Connect(function()
 	Frame.Visible = false
-	CashOutEvent:FireServer()
+	CashOutEvent:FireServer(reward)
 end)
 
 ContinueButton.MouseButton1Click:Connect(function()

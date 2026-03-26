@@ -1,12 +1,11 @@
 local BaseRoom = require(script.Parent.BaseRoom)
-local PlayerStatsService = require(game.ServerScriptService.PlayerService.PlayerStatsService)
 local TweenService = game:GetService("TweenService")
 
 local BrokenBridgeRoom = {}
 BrokenBridgeRoom.__index = BrokenBridgeRoom
 setmetatable(BrokenBridgeRoom, {__index = BaseRoom})
 
-local WinPercentage = {
+BaseRoom.winPercentage = {
 	90,
 	80,
 	68,
@@ -38,11 +37,7 @@ function BrokenBridgeRoom.new()
 end
 
 function BrokenBridgeRoom:StartRoom(index, player, roomModel)
-	BaseRoom:StartRoom(index, player)
-	local isWin = PlayerStatsService:TriggerChanceRoom(player, self:GetWinPercentage(index, player))
-	print(roomModel)
-	print("BrokenBridge, win:", self:GetWinPercentage(index, player), "%, isWin:", isWin)
-	
+	local isWin = BaseRoom:StartRoom(index, player)
 	if isWin == false then
 		spawn(function()
 			BreakBridge(roomModel)
@@ -50,26 +45,22 @@ function BrokenBridgeRoom:StartRoom(index, player, roomModel)
 	end
 end
 
--- Override de GetWinPercentage pour utiliser les valeurs spécifiques de BrokenBridgeRoom
-function BrokenBridgeRoom:GetWinPercentage(index, player)
-	return WinPercentage[index] + PlayerStatsService:GetAdditionnalChance(player)
-end
-
 function BreakBridge(roomModel)
 	
-	local delayTime = math.random(0, 1)
+	local delayTime = math.random(1.5, 3)
 
+	task.wait(delayTime)
 	for _, obj in ipairs(roomModel:GetDescendants()) do
 		if obj:IsA("BasePart") and obj.Name == "Breakable" then
-			task.spawn(function()
+			--task.spawn(function()
 				table.insert(breakablePart, {
 					part = obj,
 					position = obj.Position,
 					rotation = obj.Orientation -- ou obj.CFrame si tu veux tout
 				})
-				task.wait(delayTime)
 				obj.Anchored = false
-			end)
+				task.wait(0.05)
+			--end)
 		end
 	end
 	
@@ -93,8 +84,5 @@ function BreakBridge(roomModel)
 
 	end
 end
-
--- Si vous voulez appeler la fonction parent (BaseRoom) depuis une autre fonction :
--- Utilisez BaseRoom.GetWinPercentage(self, index) ou self:GetWinPercentage(index)
 
 return BrokenBridgeRoom

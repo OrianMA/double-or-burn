@@ -24,7 +24,7 @@ end
 function PlayerProgressService:SetRoomIndex(player, value)
 	local p = progress[player]
 	if not p then return end
-	value = math.max(1, math.floor(value))
+	value = math.max(0, math.floor(value))
 
 	p.roomIndex = value
 	p.bestRoom = math.max(p.bestRoom, value)

@@ -85,6 +85,10 @@ function RoomManager.RegisterPlayerFromRace(player)
 	table.insert(PlayersRegistered, player)
 end
 
+function RoomManager.IsPlayerRegistered(player)
+	return table.find(PlayersRegistered, player) ~= nil
+end
+
 function RoomManager.GetPlayerLeft()
 	return #PlayersRegistered
 end

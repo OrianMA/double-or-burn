@@ -1,3 +1,5 @@
+local DataManager = require(game.ServerScriptService.PlayerService.DataManager)
+
 local RoomChoiceEvent = game.ReplicatedStorage.Remotes.RoomChoiceEvent
 local CashOutEvent = game.ReplicatedStorage.Remotes.CashOutEvent
 local ContinueEvent = game.ReplicatedStorage.Remotes.ContinueEvent
@@ -7,15 +9,15 @@ local RoomGenerator = require(game.ServerScriptService.RoomSystem.RoomGenerator)
 local RoomCatalog = require(game.ServerScriptService.RoomSystem.RoomCatalog)
 local PlayerProgressService = require(game.ServerScriptService.PlayerService.PlayerProgressService)
 
-local function ClaimReward(player)
-	print("reward claimed")	
+local function ClaimReward(player, reward)
+	DataManager:Add(player, "wins", reward)
 end
 
 local function ReturnToSpawn(player)
 	player.Character.HumanoidRootPart.CFrame = game.Workspace.SpawnLocation.CFrame + Vector3.new(0, 2, 0)
 end
 
-local function CashOut(player)
+local function CashOut(player, reward)
 	ReturnToSpawn(player)
 	ClaimReward(player)
 	CashOutEvent:FireClient(player)
@@ -26,7 +28,6 @@ end
 local function Continue(player)
 	local roomIndex = PlayerProgressService:GetRoomIndex(player)
 	local roomModel = RoomGenerator.GetRoomIndex(roomIndex)
-	print(roomModel)
 	
 	if roomModel then
 		local roomType = roomModel:GetAttribute("RoomType")
