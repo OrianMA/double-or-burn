@@ -4,12 +4,14 @@ local RoomChoiceEvent = game.ReplicatedStorage.Remotes.RoomChoiceEvent
 local CashOutEvent = game.ReplicatedStorage.Remotes.CashOutEvent
 local ContinueEvent = game.ReplicatedStorage.Remotes.ContinueEvent
 local EndGameEvent = game.ReplicatedStorage.Remotes.EndGameEvent
+local UpdateUIEvent = game.ReplicatedStorage.Remotes.UpdateUIEvent
 
 local RoomGenerator = require(game.ServerScriptService.RoomSystem.RoomGenerator)
 local RoomCatalog = require(game.ServerScriptService.RoomSystem.RoomCatalog)
 local PlayerProgressService = require(game.ServerScriptService.PlayerService.PlayerProgressService)
 
 local function ClaimReward(player, reward)
+	print(reward)
 	DataManager:Add(player, "wins", reward)
 end
 
@@ -19,10 +21,11 @@ end
 
 local function CashOut(player, reward)
 	ReturnToSpawn(player)
-	ClaimReward(player)
+	ClaimReward(player, reward)
 	CashOutEvent:FireClient(player)
 	
 	EndGameEvent:FireClient(player)
+	UpdateUIEvent:FireClient(player)
 end
 
 local function Continue(player)

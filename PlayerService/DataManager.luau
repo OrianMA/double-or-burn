@@ -1,4 +1,5 @@
 local DataStoreService = game:GetService("DataStoreService")
+local GetData = game.ReplicatedStorage.GetData
 local Players = game:GetService("Players")
 
 local DataManager = {}
@@ -73,14 +74,37 @@ function DataManager:Set(player, statName, value)
 	local data = sessionData[player.UserId]
 	if not data then return end
 	data[statName] = value
+
+	-- Sync leaderstats
+	local leaderstats = player:FindFirstChild("leaderstats")
+	if leaderstats then
+		local stat = leaderstats:FindFirstChild(statName)
+		if stat then
+			stat.Value = value
+		end
+	end
 end
 
 -- ADD
 function DataManager:Add(player, statName, amount)
 	local data = sessionData[player.UserId]
 	if not data then return end
-
 	data[statName] = (data[statName] or 0) + amount
+
+	-- Sync leaderstats
+	local leaderstats = player:FindFirstChild("leaderstats")
+	if leaderstats then
+		local stat = leaderstats:FindFirstChild(statName)
+		if stat then
+			stat.Value = data[statName]
+		end
+	end
+
+	DataManager:Save(player)
+end
+
+GetData.OnServerInvoke = function(player)
+	return sessionData[player.UserId]
 end
 
 -- INIT PLAYER

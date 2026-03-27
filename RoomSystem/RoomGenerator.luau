@@ -1,4 +1,5 @@
 local RoomCatalog = require(script.Parent.RoomCatalog)
+local EndRoomTriggerManager = require(game.ServerScriptService.RoomSystem.EndRoomTriggerManager)
 
 local roomParent = workspace.Rooms
 local firstRoom = workspace.Rooms.FirstRoom
@@ -57,8 +58,18 @@ local function CreateRoom(previousRoom)
 	instantiateRoom.Parent = roomParent
 	instantiateRoom:PivotTo(GetChildrenNextPositionRoom(previousRoom))
 	lastInstantiateRoom = instantiateRoom
-	
+
+	-- Setup du trigger avec le callback passé par RoomManager
+	if onRoomEndCallback then
+		EndRoomTriggerManager.SetupRoomTrigger(instantiateRoom, onRoomEndCallback)
+	end
+
 	table.insert(roomPool, instantiateRoom)
+end
+
+-- Appelé par RoomManager pour injecter le callback
+function RoomGenerator.SetOnRoomEndCallback(callback)
+	onRoomEndCallback = callback
 end
 
 function RoomGenerator.ClearAll()
@@ -81,6 +92,10 @@ function RoomGenerator:CreateRace()
 end
 
 function RoomGenerator:Init()
+	if onRoomEndCallback then
+		EndRoomTriggerManager.SetupRoomTrigger(firstRoom, onRoomEndCallback)
+	end
+	
 	InitNumberRoom(firstRoom, 1)
 	self:CreateRace()
 end

@@ -28,9 +28,6 @@ local PlayersRegistered = {}
 
 local RoomManager = {}
 
-function RoomManager.Init(player)
-	RoomGenerator:Init()
-end
 
 local function DiscardPlayerFromRace(player)
 	table.remove(PlayersRegistered, table.find(PlayersRegistered, player))
@@ -45,7 +42,7 @@ end
 EndGameEvent.OnServerEvent:Connect(EndGame)
 
 
-function RoomManager.EndRoomtrigger(player)
+function RoomManager.EndRoomTrigger(player)
 	PlayerProgressService:IncrementRoom(player)
 	local reward = RoomManager.GetReward(player)
 	local riskValue = RoomManager.GetRisk(player)
@@ -64,7 +61,6 @@ function RoomManager.GetRisk(player)
 	local roomIndex = PlayerProgressService:GetRoomIndex(player)
 	local nextRoomModel = RoomGenerator.GetRoomIndex(roomIndex)
 	
-	-- Récupérer le type de room et le module correspondant
 	local roomType = nextRoomModel:GetAttribute("RoomType")
 	local roomModule = RoomCatalog[roomType]
 	
@@ -103,5 +99,15 @@ function RoomManager.RiseLava()
 	LavaRise:UpdatePlayerNumber(RoomManager.GetPlayerLeft())
 	LavaRise:Rise()
 end
+
+function RoomManager.Init(player)
+	-- On injecte le callback avant de créer les rooms
+	RoomGenerator.SetOnRoomEndCallback(function(player)
+		RoomManager.EndRoomTrigger(player)
+	end)
+
+	RoomGenerator:Init()
+end
+
 
 return RoomManager

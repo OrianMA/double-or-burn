@@ -36,7 +36,6 @@ end
 
 function PlayerProgressService:ClearRoomProgression(player)
 	self:SetRoomIndex(player, 0)
-	print(PlayerProgressService:GetRoomIndex(player))
 end
 
 -- wiring Players

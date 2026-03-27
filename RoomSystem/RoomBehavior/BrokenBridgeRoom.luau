@@ -59,7 +59,7 @@ function BreakBridge(roomModel)
 					rotation = obj.Orientation -- ou obj.CFrame si tu veux tout
 				})
 				obj.Anchored = false
-				task.wait(0.05)
+				task.wait(0.01)
 			--end)
 		end
 	end
