@@ -5,7 +5,7 @@ local BrokenBridgeRoom = {}
 BrokenBridgeRoom.__index = BrokenBridgeRoom
 setmetatable(BrokenBridgeRoom, {__index = BaseRoom})
 
-BaseRoom.winPercentage = {
+BrokenBridgeRoom.winPercentage = {
 	90,
 	80,
 	68,
@@ -18,7 +18,16 @@ BaseRoom.winPercentage = {
 	9,
 	6,
 	3,
-	1
+	1,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
 }
 
 local breakablePart = {}
@@ -38,6 +47,7 @@ end
 
 function BrokenBridgeRoom:StartRoom(index, player, roomModel)
 	local isWin = BaseRoom:StartRoom(index, player)
+	print(tostring(isWin) .. " " .. BrokenBridgeRoom.winPercentage[index])
 	if isWin == false then
 		spawn(function()
 			BreakBridge(roomModel)

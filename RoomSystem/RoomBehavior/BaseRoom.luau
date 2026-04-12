@@ -24,10 +24,10 @@ function RoomBehavior.GetDescription()
 	return description
 end
 
-function RoomBehavior.GetWinPercentage(roomIndex, player)
-	local additionnalChance = DataManager:Get(player, "chance")
-	return RoomBehavior.winPercentage[roomIndex] + additionnalChance
-end
+--function RoomBehavior.GetWinPercentage(roomIndex, player)
+--	local additionnalChance = DataManager:Get(player, "chance")
+--	return RoomBehavior.winPercentage[roomIndex] + additionnalChance
+--end
 
 -- Exporter RoomBehavior pour accès externe
 BaseRoom.RoomBehavior = RoomBehavior
@@ -40,7 +40,8 @@ end
 
 function BaseRoom:GetWinPercentage(roomIndex, player)
 	local additionnalChance = DataManager:Get(player, "chance")
-	return BaseRoom.winPercentage[roomIndex] + additionnalChance
+	local chanceMultiplier = DataManager:Get(player, "chanceMultiplier")
+	return self.winPercentage[roomIndex] + additionnalChance * chanceMultiplier
 end
 
 function BaseRoom:GetSpawnPointPath()

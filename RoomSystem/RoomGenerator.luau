@@ -12,8 +12,16 @@ local safeRoom = game.ServerStorage.Room.SafeRoom
 local BrokenBridgeRoom = game.ServerStorage.Room.BrokenBridgeRoom
 local NumbersPrefab = game.ServerStorage.Numbers
 local roomPrefabs = {
-	safeRoom,
-	BrokenBridgeRoom
+	{
+		prefab = safeRoom,
+		maxRoom = 3,
+		instanciateNumber = 0
+	},
+	{
+		prefab = BrokenBridgeRoom,
+		maxRoom = -1,
+		instanciateNumber = 0
+	},
 }
 
 local RoomGenerator = {}
@@ -53,8 +61,16 @@ local function GetChildrenNextPositionRoom(instantiateRoom)
 end
 
 local function CreateRoom(previousRoom)
-	local randomRoom = roomPrefabs[math.random(1, #roomPrefabs)]
-	local instantiateRoom = randomRoom:Clone()
+	local randomRoom
+	for i = 0, 20 do
+		randomRoom = roomPrefabs[math.random(1, #roomPrefabs)]
+		if randomRoom.maxRoom == -1 or randomRoom.maxRoom > randomRoom.instanciateNumber then
+			randomRoom.instanciateNumber += 1
+			break
+		end
+	end
+
+	local instantiateRoom = randomRoom.prefab:Clone()
 	instantiateRoom.Parent = roomParent
 	instantiateRoom:PivotTo(GetChildrenNextPositionRoom(previousRoom))
 	lastInstantiateRoom = instantiateRoom

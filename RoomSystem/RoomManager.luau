@@ -6,9 +6,11 @@ local WarningLavaRiseEvent = game.ReplicatedStorage.Remotes.WarningLavaRiseEvent
 local RoomGenerator = require(script.Parent.RoomGenerator)
 local RoomCatalog = require(script.Parent.RoomCatalog)
 local PlayerProgressService = require(script.Parent.Parent.PlayerService.PlayerProgressService)
+local DataManager = require(script.Parent.Parent.PlayerService.DataManager)
+
 local LavaRise = require(game.ServerScriptService.LavaRise)
 
-local AuraCoinRewards = {
+local WinsRewards = {
 	1,
 	2,
 	4,
@@ -21,7 +23,14 @@ local AuraCoinRewards = {
 	6000,
 	12000,
 	30000,
-	67000
+	67000,
+	100000,
+	200000,
+	500000,
+	1000000,
+	2000000,
+	4000000,
+	8000000,
 }
 
 local PlayersRegistered = {}
@@ -45,25 +54,29 @@ EndGameEvent.OnServerEvent:Connect(EndGame)
 function RoomManager.EndRoomTrigger(player)
 	PlayerProgressService:IncrementRoom(player)
 	local reward = RoomManager.GetReward(player)
-	local riskValue = RoomManager.GetRisk(player)
 	local roomIndex = PlayerProgressService:GetRoomIndex(player)
-	local nextRoomModel = RoomGenerator.GetRoomIndex(roomIndex + 1)
+	local nextRoomModel = RoomGenerator.GetRoomIndex(roomIndex)
+	local riskValue = 0
 	local isFinalRoom = nextRoomModel == nil
+	if (isFinalRoom == false) then
+		 riskValue = RoomManager.GetRisk(player)
+	end
+	
 	RoomChoiceEvent:FireClient(player, reward, riskValue, isFinalRoom)
 end
 
 function RoomManager.GetReward(player)
 	local roomIndex = PlayerProgressService:GetRoomIndex(player)
-	return AuraCoinRewards[roomIndex] or 0
+	local reward = WinsRewards[roomIndex] * DataManager:Get(player, "winsMultiplier")
+	return reward or 0
 end
 
 function RoomManager.GetRisk(player)
 	local roomIndex = PlayerProgressService:GetRoomIndex(player)
 	local nextRoomModel = RoomGenerator.GetRoomIndex(roomIndex)
 	
-	local roomType = nextRoomModel:GetAttribute("RoomType")
+	local roomType = nextRoomModel:GetAttribute("RoomType")	
 	local roomModule = RoomCatalog[roomType]
-	
 	if roomModule then
 		local RoomClass = require(roomModule)
 		return RoomClass:GetWinPercentage(roomIndex, player)

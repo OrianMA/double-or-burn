@@ -13,6 +13,7 @@ local PlayerProgressService = require(game.ServerScriptService.PlayerService.Pla
 local function ClaimReward(player, reward)
 	print(reward)
 	DataManager:Add(player, "wins", reward)
+	DataManager:UpdateWinsLeaderboard(player)
 end
 
 local function ReturnToSpawn(player)
